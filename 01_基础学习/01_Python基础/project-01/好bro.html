@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <title 生日快乐！</title>
+    <style>
+        :root{
+            --glow-r1:15px;
+            --glow-r2:35px;
+            --haikyuu-orange: #ff6b35;
+            --haikyuu-black: #1a1a2e;
+            --valorant-cyan: #00d4ff;
+            --valorant-purple: #ff0055;
+            --valorant-green: #00ff88;
+        }
+        html,body{
+            height:100%;margin:0;overflow:hidden;
+            font-family:"微软雅黑",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+            transition:background 1s;
+            background:
+                radial-gradient(1200px 600px at 50% 40%, rgba(255,107,53,.15), rgba(0,0,0,0) 60%),
+                radial-gradient(circle at 50% 40%, #0f0f1e 0%, #1a1a2e 100%);
+        }
+        body.dark{
+            background:
+                radial-gradient(1200px 600px at 50% 40%, rgba(255,107,53,.25), rgba(0,0,0,0) 60%),
+                radial-gradient(circle at 50% 40%, #0a0a14 0%, #000000 100%);
+            color:#eee;
+        }
+        body.dark.eco{ --glow-r1:10px; --glow-r2:22px; }
+
+        .stage{position:relative;width:100%;height:100%;}
+
+        .msg{
+            position:absolute;left:50%;top:50%;
+            padding:16px 24px;border-radius:14px;
+            color:#fff;font-weight:800;
+            font-size:clamp(14px,3.2vmin,22px);
+            text-shadow:0 2px 12px rgba(0,0,0,.5);
+            opacity:0;
+            transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.8) rotate(var(--rot));
+            animation: flight var(--dur) cubic-bezier(.25,.7,.3,1) var(--delay) both;
+            box-shadow:0 0 25px rgba(0,212,255,.4), 0 0 50px rgba(255,0,85,.3);
+            will-change: transform, opacity;
+            background: var(--bg);
+            border: 2px solid rgba(255,255,255,.15);
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            z-index: 10;
+        }
+        body.dark .msg{
+            box-shadow:0 0 35px rgba(0,212,255,.5), 0 0 70px rgba(255,0,85,.4);
+            filter: drop-shadow(0 0 var(--glow-r1) var(--glow1, rgba(0,0,0,0)))
+                    drop-shadow(0 0 var(--glow-r2) var(--glow2, rgba(0,0,0,0)));
+        }
+
+        @keyframes flight{
+            0%{
+                opacity:0;
+                transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.8) rotate(var(--rot));
+            }
+            12%{ opacity:1; }
+            35%{
+                transform:translate(-50%,-50%) translate(calc(var(--dx)*.1),calc(var(--dy)*.1)) scale(1.1);
+            }
+            60%{
+                transform:translate(-50%,-50%) translate(calc(var(--dx)*1.1),calc(var(--dy)*1.1)) scale(.95) rotate(var(--rot));
+            }
+            80%{
+                transform:translate(-50%,-50%) translate(calc(var(--heart-x)*.3),calc(var(--heart-y)*.3)) scale(.9) rotate(var(--heart-rot));
+            }
+            100%{
+                opacity:1;
+                transform:translate(-50%,-50%) translate(var(--heart-x),var(--heart-y)) scale(1) rotate(var(--heart-rot));
+            }
+        }
+
+        .msg::before,.msg::after{
+            content:''; position:absolute; left:50%; top:0;
+            background:inherit;
+            border-radius:50px 50px 0 0;
+            width:32px; height:48px; opacity:0;
+            transition:opacity .35s ease;
+            transform-origin:0 100%; transform:rotate(-45deg); z-index:0;
+        }
+        .msg::after{
+            left:0; transform-origin:100% 100%; transform:rotate(45deg);
+        }
+        .msg.heart-mode{ color:#fff; }
+        .msg .text{ position:relative; z-index:1; }
+        .msg.heart-mode::before,.msg.heart-mode::after{ opacity:1; }
+
+        .msg.locked{
+            animation:none;
+            transform:translate(-50%,-50%) translate(var(--heart-x),var(--heart-y)) scale(1) rotate(var(--heart-rot));
+            opacity:1;
+        }
+        .msg.locked.pulse{ animation:pulse 2s ease-in-out 1; }
+        .msg.locked::before,.msg.locked::after{ display:none; }
+        body.dark .msg.locked{ filter:none; }
+        .msg.locked .text{ text-shadow:0 1px 3px rgba(0,0,0,.25); }
+
+        @keyframes pulse{
+            0%,100%{ transform:translate(-50%,-50%) translate(var(--heart-x),var(--heart-y)) scale(1); }
+            50%   { transform:translate(-50%,-50%) translate(var(--heart-x),var(--heart-y)) scale(1.15); }
+        }
+
+        /* 破碎动画 */
+        .msg.burst{ animation: burst 1.3s cubic-bezier(.17,.6,.2,1) forwards; }
+        @keyframes burst{
+            0%{ opacity:1; transform:translate(-50%,-50%) translate(var(--heart-x),var(--heart-y)) scale(1); filter:blur(0); }
+            55%{ opacity:.8; transform:translate(-50%,-50%) translate(calc(var(--heart-x) + var(--bx)*0.5), calc(var(--heart-y) + var(--by)*0.5)) scale(.85) rotate(var(--rot)); filter:blur(.5px); }
+            100%{ opacity:0; transform:translate(-50%,-50%) translate(calc(var(--heart-x) + var(--bx)), calc(var(--heart-y) + var(--by))) scale(.6) rotate(var(--rot)); filter:blur(3px); }
+        }
+
+        .center-title{
+            position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+            font-weight:900; letter-spacing:.25em;
+            font-size:clamp(28px,7vmin,52px);
+            color:transparent;
+            background: linear-gradient(135deg, #ff6b35 0%, #ff0055 50%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            text-shadow:none;
+            opacity:0; pointer-events:none;
+            animation:titleIn 1.8s ease 1.2s both;
+            z-index: 1000;
+            text-align: center;
+            line-height: 1.3;
+            filter: drop-shadow(0 0 30px rgba(255,107,53,.4));
+        }
+        body.dark .center-title{
+            background: linear-gradient(135deg, #ff6b35 0%, #ff0055 40%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            filter: drop-shadow(0 0 40px rgba(255,107,53,.6));
+        }
+        @keyframes titleIn{
+            from{opacity:0; transform:translate(-50%,-55%) scale(0.85);}
+            to{opacity:1; transform:translate(-50%,-50%) scale(1);}
+        }
+
+        .controls{ position:absolute; right:24px; bottom:24px; display:flex; gap:16px; align-items:center; }
+        .btn{
+            padding:14px 22px; border:none; border-radius:14px;
+            background:linear-gradient(135deg, rgba(255,107,53,.9), rgba(255,0,85,.7));
+            backdrop-filter:blur(12px);
+            color:#fff; font-weight:800; cursor:pointer;
+            box-shadow:0 0 30px rgba(255,107,53,.5), 0 6px 30px rgba(0,0,0,.4);
+            transition:all 0.3s ease;
+            text-transform:uppercase;
+            letter-spacing:0.08em;
+            font-size:15px;
+        }
+        .btn:hover{
+            transform:translateY(-3px) scale(1.05);
+            box-shadow:0 0 40px rgba(255,107,53,.7), 0 10px 40px rgba(0,0,0,.5);
+        }
+        body.dark .btn{
+            background:linear-gradient(135deg, rgba(255,107,53,.7), rgba(0,212,255,.5));
+            color:#fff;
+        }
+
+        .snow{
+            position:fixed; top:-10px; color:#00d4ff;
+            user-select:none; pointer-events:none;
+            z-index:99; text-shadow:0 0 15px rgba(0,212,255,.9), 0 0 25px rgba(255,0,85,.5);
+            animation:snowfall linear forwards;
+            font-weight:bold;
+        }
+        @keyframes snowfall{
+            0%{ transform:translateY(0) rotate(0deg); opacity:1;}
+            100%{ transform:translateY(100vh) rotate(360deg); opacity:0;}
+        }
+
+        #bgMusic { display: none; }
+
+        /* ===== 烟花效果 ===== */
+        .firework-rocket {
+            position: fixed;
+            width: 4px; height: 4px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 6px 2px #fff, 0 0 12px 4px var(--rocket-color, #ff6b35);
+            pointer-events: none;
+            z-index: 200;
+            animation: rocketUp var(--rocket-dur, 0.6s) ease-out forwards;
+        }
+        .firework-rocket::after {
+            content: '';
+            position: absolute;
+            width: 2px; height: 20px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.6), transparent);
+            left: 50%; top: 100%;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        @keyframes rocketUp {
+            0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+            80%  { opacity: 1; }
+            100% { opacity: 0; transform: translate(var(--rx, 0), var(--ry, -20vh)) scale(0.3); }
+        }
+        .firework-particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 199;
+            animation: particleBurst var(--p-dur, 1s) ease-out forwards;
+        }
+        @keyframes particleBurst {
+            0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+            50%  { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(var(--px, 0), calc(var(--py, 0) + var(--gravity, 40px))) scale(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="stage" id="stage">
+        <div class="center-title" id="title">我的好兄弟<br>生日快乐！</div>
+    </div>
+    <div class="controls">
+        <button class="btn" id="replay">重放 / 切换模式</button>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="https://lf26-music-east.douyinstatic.com/obj/ies-music-hj/7495920705440140091.mp3" type="audio/mpeg">
+    </audio>
+
+<script>
+const tips=[
+    '我的好兄弟，生日快乐！','今天你是全场最佳ACE','排球扣杀，瓦罗兰特爆头，样样精通',
+    '乌野精神，飞吧！','壹决大招：生日无敌时间','主攻手生日，扣杀所有烦恼',
+    '今天不瓦了，今天当寿星','一传到位，生日到位，快乐到位','19岁，六边形战士继续全能',
+    '后排防守挡不住你的成长','发球得分，新的一岁继续赢','捷风祝你生日加速不落地',
+    '暮蝶封烟为你庆生','苏大瓦男，又长一岁枪更稳了','白天扣球，晚上爆头，今天过生日',
+    '愿你的扣杀永远有力','愿你的爆头永远精准','新的一岁，枪更准，球更狠，人更帅',
+    '排球是热爱，瓦罗兰特是快乐，你是兄弟','19岁继续在游戏和球场上闪闪发光',
+    '生日Buff已开，爆头率+100%','主攻手生日快乐，扣杀所有不开心',
+    '独墅湖畔，晚风祝你生日快乐','苏大大一，第一个生日，未来可期',
+    '在苏州，打最好的球，过最棒的生日','苏大男生，今天全场焦点',
+    '生日限定版，苏大第一决斗','又菜又爱玩？不，今天又强又寿星！',
+    '19岁，继续当我们的MVP','好兄弟，新的一岁带飞我们','飞吧！向着更高的顶点',
+    '我的好兄弟，生日快乐！','今天你是全场最佳ACE','排球扣杀，瓦罗兰特爆头，样样精通'
+];
+
+const stage  = document.getElementById('stage');
+const replay = document.getElementById('replay');
+const title  = document.getElementById('title');
+const bgMusic = document.getElementById('bgMusic');
+let dark = true;
+let eco = false;
+let snowRunning = false;
+let snowFrame;
+let lastSnowTime = 0;
+let snowIntervalMs = 550;
+let snowMax = 180;
+let totalCurrent = 0;
+let lockedCount = 0;
+
+const directions = [
+    {dx:'0vw',dy:'-90vh'},{dx:'0vw',dy:'90vh'},
+    {dx:'-90vw',dy:'0vh'},{dx:'90vw',dy:'0vh'},
+    {dx:'-80vw',dy:'-80vh'},{dx:'80vw',dy:'-80vh'},
+    {dx:'-80vw',dy:'80vh'},{dx:'80vw',dy:'80vh'},
+    {dx:'0vw',dy:'-70vh'},{dx:'0vw',dy:'70vh'},
+    {dx:'-70vw',dy:'0vh'},{dx:'70vw',dy:'0vh'}
+];
+
+function rand(min,max){return Math.random()*(max-min)+min;}
+
+function hexToRgba(hex,alpha=1){
+    const h=hex.replace('#','');
+    const short=h.length===3;
+    const r=parseInt(short? h[0]+h[0] : h.slice(0,2),16);
+    const g=parseInt(short? h[1]+h[1] : h.slice(2,4),16);
+    const b=parseInt(short? h[2]+h[2] : h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function randomStyle(){
+    const arr=[
+        ['#ff6b35','#1a1a2e'], ['#ff6b35','#00d4ff'],
+        ['#00d4ff','#ff0055'], ['#ff0055','#00ff88'],
+        ['#ff6b35','#ffcc00'], ['#ff0055','#ff6b35'],
+        ['#00d4ff','#1a1a2e'], ['#00ff88','#00d4ff'],
+        ['#ff6b35','#ffffff'], ['#ff0055','#1a1a2e']
+    ];
+    const [c1,c2]=arr[Math.floor(Math.random()*arr.length)];
+    return {
+        bg:`linear-gradient(135deg,${c1},${c2})`,
+        glow1:hexToRgba(c1,0.7),
+        glow2:hexToRgba(c2,0.5)
+    };
+}
+
+// 更大的爱心结构 - 扩大50%
+function heartScale(){
+    const minDim = Math.min(window.innerWidth, window.innerHeight);
+    let s = Math.round(minDim * 0.045);
+    s = Math.max(16, Math.min(45, s));
+    if (dark && eco) s = Math.max(14, Math.floor(s * 0.92));
+    return s;
+}
+
+function centerYOffset(){
+    const portrait = window.innerHeight > window.innerWidth;
+    const minDim = Math.min(window.innerWidth, window.innerHeight);
+    return portrait ? -minDim * 0.06 : 0;
+}
+
+function heartXY(t){
+    const s = heartScale();
+    const x = s * (16 * Math.sin(t)**3);
+    const y = -s * (13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+    return {x: x+'px', y: (y + centerYOffset())+'px'};
+}
+
+function createMsg(i,total){
+    const el = document.createElement('div');
+    el.className = 'msg';
+
+    const d = directions[Math.floor(Math.random()*directions.length)];
+    el.style.setProperty('--dx', d.dx);
+    el.style.setProperty('--dy', d.dy);
+    el.style.setProperty('--rot', rand(-40,40)+'deg');
+
+    const baseDur = dark && eco ? rand(5.8,7.2) : rand(6.5,8.5);
+    el.style.setProperty('--dur', baseDur+'s');
+    el.style.setProperty('--delay', (i*0.12 + rand(0,0.5))+'s');
+
+    const sty = randomStyle();
+    el.style.setProperty('--bg', sty.bg);
+    el.style.setProperty('--glow1', sty.glow1);
+    el.style.setProperty('--glow2', sty.glow2);
+
+    const t = (i / total) * Math.PI * 2;
+    const {x,y} = heartXY(t);
+    el.style.setProperty('--heart-x', x);
+    el.style.setProperty('--heart-y', y);
+    el.style.setProperty('--heart-rot', rand(-12,12)+'deg');
+
+    const span = document.createElement('span');
+    span.className = 'text';
+    span.textContent = tips[Math.floor(Math.random()*tips.length)];
+    el.appendChild(span);
+
+    const delay = parseFloat(el.style.getPropertyValue('--delay'));
+    const dur   = parseFloat(el.style.getPropertyValue('--dur'));
+    const switchAt = delay + dur * 0.78;
+    const switchTimer = setTimeout(()=>{ el.classList.add('heart-mode'); }, switchAt*1000);
+
+    el.addEventListener('animationend',()=>{
+        clearTimeout(switchTimer);
+        el.classList.add('heart-mode','locked','pulse');
+        el.style.willChange = 'auto';
+
+        const spread = rand(180, 350);
+        const ang    = rand(0, Math.PI*2);
+        const bx = Math.cos(ang)*spread;
+        const by = Math.sin(ang)*spread;
+        el.style.setProperty('--bx', bx+'px');
+        el.style.setProperty('--by', by+'px');
+
+        lockedCount++;
+        if(lockedCount===totalCurrent) onAllLocked();
+    }, {once:true});
+
+    stage.appendChild(el);
+}
+
+function finalBurst(){
+    stage.querySelectorAll('.msg.locked').forEach(el=>{
+        el.classList.remove('pulse');
+        const jitter = rand(0, 300);
+        setTimeout(()=> el.classList.add('burst'), jitter);
+        el.addEventListener('animationend',()=> el.remove(), {once:true});
+    });
+    title.style.opacity = 0;
+}
+
+function play(){
+    stage.querySelectorAll('.msg').forEach(n=>n.remove());
+    title.style.opacity = 0;
+
+    const minDim = Math.min(window.innerWidth, window.innerHeight);
+    let TOTAL;
+    // 减少粒子数量，让爱心结构更清晰不拥挤
+    if (minDim <= 420) {
+        TOTAL = dark ? (eco ? 55 : 80) : 110;
+    } else if (minDim <= 720) {
+        TOTAL = dark ? (eco ? 70 : 100) : 140;
+    } else {
+        TOTAL = dark ? (eco ? 85 : 120) : 180;
+    }
+    totalCurrent = TOTAL;
+    lockedCount = 0;
+    for(let i=0;i<TOTAL;i++) createMsg(i,TOTAL);
+
+    setTimeout(()=>{ title.style.opacity = 1; }, 1400);
+    playMusic();
+}
+
+function playMusic() {
+    bgMusic.currentTime = 0;
+    bgMusic.play().catch(error => {
+        console.log('音乐播放需要用户交互:', error);
+    });
+}
+
+function createSnow(){
+    const snow=document.createElement('div');
+    snow.className='snow';
+    const symbols = ['❄', '◆', '▲', '●', '★'];
+    snow.textContent = symbols[Math.floor(Math.random()*symbols.length)];
+    snow.style.left=(Math.random()*100)+'vw';
+    snow.style.fontSize=(Math.random()*16+12)+'px';
+    snow.style.opacity=(Math.random()*0.8+0.2);
+    const duration=(Math.random()*5+6);
+    snow.style.animationDuration=duration+'s';
+    document.body.appendChild(snow);
+    setTimeout(()=>snow.remove(),duration*1000);
+}
+
+function loopSnow(ts){
+    if(!lastSnowTime) lastSnowTime=ts;
+    const delta=ts-lastSnowTime;
+    if(delta>snowIntervalMs){
+        if(snowRunning){
+            const count = document.querySelectorAll('.snow').length;
+            if(count < snowMax) createSnow();
+        }
+        lastSnowTime=ts;
+    }
+    snowFrame=requestAnimationFrame(loopSnow);
+}
+
+function startSnow(){ snowRunning=true; lastSnowTime=0; loopSnow(); }
+function stopSnow(){
+    snowRunning=false;
+    cancelAnimationFrame(snowFrame);
+    document.querySelectorAll('.snow').forEach(s=>s.remove());
+}
+
+function decideEco(){
+    const cores = navigator.hardwareConcurrency || 4;
+    const mem = navigator.deviceMemory || 4;
+    const area = window.innerWidth * window.innerHeight;
+    return (cores <= 4) || (mem <= 4) || (area >= 2400*1440);
+}
+
+function applyMode(){
+    document.body.classList.toggle('dark', dark);
+    if(dark){
+        eco = decideEco();
+        document.body.classList.toggle('eco', eco);
+        snowIntervalMs = eco ? 650 : 400;
+        snowMax = eco ? 140 : 220;
+        startSnow();
+    }else{
+        stopSnow();
+        document.body.classList.remove('eco');
+    }
+}
+
+function onAllLocked(){
+    if(dark){
+        snowIntervalMs = eco ? 550 : 320;
+        snowMax = eco ? 180 : 300;
+    }
+
+    setTimeout(()=>{
+        finalBurst();
+    }, 2800);
+}
+
+applyMode();
+play();
+
+replay.onclick = ()=>{
+    dark = !dark;
+    applyMode();
+    play();
+};
+
+let resizeTimer;
+window.addEventListener('resize', ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(()=> play(), 150);
+});
+
+document.addEventListener('click', () => {
+    if (bgMusic.paused) {
+        playMusic();
+    }
+}, { once: true });
+
+/* ===== 点击放烟花 ===== */
+const fwColors = ['#ff6b35','#ff0055','#00d4ff','#00ff88','#ffcc00','#ff44aa','#8855ff'];
+let activeFireworks = 0;
+const MAX_FIREWORKS = 10;
+
+function launchFirework(x, y) {
+    if (activeFireworks >= MAX_FIREWORKS) return;
+    activeFireworks++;
+
+    const rocket = document.createElement('div');
+    rocket.className = 'firework-rocket';
+    rocket.style.left = x + 'px';
+    rocket.style.top = y + 'px';
+    const color = fwColors[Math.floor(Math.random() * fwColors.length)];
+    rocket.style.setProperty('--rocket-color', color);
+    const riseHeight = rand(15, 28);
+    const offsetX = rand(-3, 3);
+    rocket.style.setProperty('--rx', offsetX + 'vw');
+    rocket.style.setProperty('--ry', -riseHeight + 'vh');
+    const rocketDur = rand(0.5, 0.8);
+    rocket.style.setProperty('--rocket-dur', rocketDur + 's');
+    document.body.appendChild(rocket);
+
+    rocket.addEventListener('animationend', () => {
+        rocket.remove();
+        explodeFirework(x, y, offsetX, riseHeight, color);
+        activeFireworks--;
+    }, { once: true });
+}
+
+function explodeFirework(startX, startY, offsetXvw, riseHeightvh, baseColor) {
+    const cx = startX + offsetXvw * window.innerWidth / 100;
+    const cy = startY - riseHeightvh * window.innerHeight / 100;
+    const count = Math.floor(rand(30, 50));
+
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'firework-particle';
+        p.style.left = cx + 'px';
+        p.style.top = cy + 'px';
+
+        const size = rand(2, 5);
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+
+        const c = Math.random() < 0.7 ? baseColor : fwColors[Math.floor(Math.random() * fwColors.length)];
+        p.style.background = c;
+        p.style.boxShadow = '0 0 ' + size + 'px ' + c;
+
+        const angle = (i / count) * Math.PI * 2 + rand(-0.3, 0.3);
+        const dist = rand(60, 180);
+        p.style.setProperty('--px', Math.cos(angle) * dist + 'px');
+        p.style.setProperty('--py', Math.sin(angle) * dist + 'px');
+        p.style.setProperty('--gravity', rand(20, 60) + 'px');
+
+        const dur = rand(0.8, 1.4);
+        p.style.setProperty('--p-dur', dur + 's');
+        p.style.animationDelay = rand(0, 0.05) + 's';
+
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), (dur + 0.1) * 1000);
+    }
+}
+
+document.addEventListener('click', (e) => {
+    if (e.target.closest('.controls') || e.target.closest('audio')) return;
+    launchFirework(e.clientX, e.clientY);
+});
+</script>
+</body>
+</html>
