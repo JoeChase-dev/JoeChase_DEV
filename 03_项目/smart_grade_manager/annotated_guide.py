@@ -106,12 +106,12 @@ def func_name(param1, param2=default_value):
     '''Function doc string (optional but recommended)'''
     return value
 
-Parameter types:
-  positional:   def f(a, b)        # f(1, 2)
-  keyword:     def f(a, b)        # f(a=1, b=2)
-  default:     def f(a, b=10)     # f(1) -> b defaults to 10
-  *args:       def f(*args)      # f(1,2,3) -> args=(1,2,3)
-  **kwargs:    def f(**kwargs)   # f(a=1,b=2) -> kwargs={'a':1,'b':2}
+Parameter types:( Python 函数的 5 种参数类型)
+  positional（位置参数）:   def f(a, b)        # f(1, 2)  顺序传递，不可省略
+  keyword（关键字参数）:     def f(a, b)        # f(a=1, b=2)  进行指定，顺序无关
+  default（默认值参数）:     def f(a, b=10)     # f(1) -> b defaults to 10  注意：默认值参数必须放在位置参数之后！
+  *args（可变位置参数收集为元组）:       def f(*args)      # f(1,2,3) -> args=(1,2,3)
+  **kwargs（可变关键字参数）:    def f(**kwargs)   # f(a=1,b=2) -> kwargs={'a':1,'b':2}  **kwargs 把 所有额外的关键字参数 收集为一个 字典
 
 6️⃣ 字符串操作
 ━━━━━━━━
