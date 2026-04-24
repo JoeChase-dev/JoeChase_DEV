@@ -1,0 +1,57 @@
+字段1	字段2	字段3	字段4	字段5	字段6	字段7
+标签	类型	问题	答案	提示	笔记	媒体
+01-推导式	基本概念	Python 有哪三种推导式？	列表推导式 [expr for x in iter]、字典推导式 {k:v for k,v in dict.items()}、集合推导式 {expr for x in iter}	列表、字典、集合	
+01-嵌套列表坑	易错	[[None]*3]*3 为什么是错误的嵌套列表写法？	乘法只复制引用，三个子列表是同一个对象。修改 a[0][0] 会同时影响三行。正确写法: [[None]*3 for _ in range(3)]	引用复制 vs 独立创建	⚠️ 嵌套列表用推导，乘法复制是坑路	
+01-heapq	基本概念	heapq.nlargest(3, data, key=lambda x:x['price']) 的作用？	从 data 列表中按 price 字段取出价格最高的前 3 个元素	key 参数指定排序依据	lambda 是匿名函数
+01-itertools	基本概念	itertools.permutations 和 combinations 的区别？	permutations 是全排列（有序，AB≠BA），combinations 是组合（无序，AB=BA）	有序 vs 无序	P(4,2)=12 vs C(4,2)=6
+01-collections	基本概念	deque 相比 list 的优势？	deque 头部插入删除是 O(1)，而 list 头部操作是 O(n)（需要移动全部元素）	O(1) vs O(n)	适合队列/BFS/滑动窗口
+01-collections	应用场景	Counter.most_common(3) 返回什么格式？	返回一个列表，包含出现频率最高的 3 个 (元素, 次数) 元组。例如 [('eyes',8), ('the',5), ('look',4)]	元组列表	词频统计神器
+02-一等公民	基本概念	Python 函数作为"一等公民"的三大特权？	①赋值给变量 say_hi = greet ②作为参数传入其他函数 call_twice(func, val) ③作为返回值 return multiplier	赋值、传参、返回值	装饰器和闭包的基础
+02-map-filter	基本概念	map() 和 filter() 各自的作用？	map(函数, 可迭代对象): 对每个元素执行相同操作；filter(函数, 可迭代对象): 只保留使函数返回 True 的元素	map 昿射，filter 过滤	推荐用列表推导式替代
+02-map-filter	对比	map+filter 和列表推导式哪个更好？	推荐列表推导式 [f(x) for x in iter if cond]，更简洁易读，更 Pythonic	可读性优先	已有现成函数时可用 map
+02-参数体系	基本概念	Python 参数的正确顺序是什么？	位置参数 → *args → 命名关键字参数 → **kwargs	位置→可变位置→关键字→可变关键字	必须遵守此顺序
+02-lambda	基本概念	lambda 匿名函数的语法和限制？	语法: lambda 参数列表: 表达式。限制: 只能写一行表达式，不能写多行语句	单行表达式	适合简单排序/key函数
+02-闭包	基本概念	什么是闭包(Closure)？	闭包 = 内部函数 + 引用的外部变量。即使外部函数已执行完毕，内部函数仍能"记住"并访问那些外部变量	内部函数记住外部变量	计数器工厂 make_counter
+02-LEGB	基本概念	LEGB 四个字母分别代表什么？	L=Local 局部（当前函数内） E=Enclosing 嵌套（外层函数） G=Global 全局（模块级别） B=Built-in 内置（len/print/int等）	由内到外查找变量	Python 变量查找顺序
+02-global-nonlocal	基本概念	global 和 nonlocal 的区别？	global 操作全局作用域的变量；nonlocal 操作嵌套作用域（外层函数）的变量	global→全局 nonlocal→外层	闭包中修改变量必用 nonlocal
+03-装饰器本质	基本概念	@decorator 语法糖的本质是什么？	@decorator 完全等价于 func = decorator(func)。手动把函数传入装饰器，再把返回的新函数赋值回去	函数接收函数返回新函数	@ 只是便捷语法糖
+03-基础装饰器	代码题	写出处理任意参数的基础装饰器模板	def record_time(func):\n    def wrapper(*args, **kwargs):\n        start = time()\n        result = func(*args, **kwargs)\n        print(f'{func.__name__}: {time()-start:.4f}s')\n        return result\n    return wrapper	*args/**kwargs 透参	保留返回值!
+03-functools.wraps	易错	装饰器为什么需要 @functools.wraps(func)？	因为装饰器会替换原函数为 wrapper，导致被装饰函数的 __name__、__doc__ 等元信息丢失。wraps 能把这些信息复制过来	保留函数元信息	不加的话 help() 显示的是 wrapper 信息
+03-带参装饰器	进阶	带参数的装饰器为什么需要三层嵌套？	第一层接收装饰器参数，第二层接收被装饰函数，第三层是实际的 wrapper 函数	三层: 参数→函数→wrapper	最复杂的装饰器形式
+03-类装饰器	基本概念	类装饰器的原理是什么？	通过 __call__ 方法让类的实例可以像函数一样调用。@ClassName 时，把函数传给类的 __init__，调用时执行 __call__	__call__ 方法	类装饰器可以做状态管理
+03-单例模式	设计模式	用装饰器实现单例模式的思路？	用一个字典 _instances 存储已创建的实例。装饰器检查字典，如果已存在则直接返回，否则创建新实例并存入	字典缓存实例	保证全局唯一
+03-线程安全单例	进阶	双重检查锁(DCL)如何实现线程安全单例？	第一层 if 快速跳过已存在的实例；加锁后第二次 if 防止多线程重复创建；释放锁后返回实例	if→lock→if 三步	防止竞态条件
+04-ABC	基本概念	metaclass=ABCMeta 和 @abstractmethod 分别做什么？	metaclass=ABCMeta 声明这是一个抽象类不能直接实例化；@abstractmethod 标记抽象方法子类必须实现否则 TypeError	抽象类 + 抽象方法	接口契约
+04-Enum	基本概念	为什么推荐 Enum 代替字面常量？	Enum 提供类型约束 + 防止重复 + 自带属性(.name/.value)，比 if status == 0 更语义清晰	语义清晰 + 类型安全	扑克花色 Suit 枚举
+04-property	基本概念	@property 装饰器的作用？	让方法像属性一样调用（不用加括号），同时可在读取/赋值时加入验证逻辑。getter 读取 setter 赋值	方法变属性	温度验证场景
+04-main	基本概念	if __name__ == '__main__': 的作用？	智能开关：直接运行文件时执行 main()，被导入时跳过。避免导入时触发副作用	直接运行ON 导入OFF	"如果我是主角就开始表演"
+04-类关系	基本概念	is-a / has-a / use-a 三种关系的区别？	is-a 继承（Manager is-a Employee）；has-a 组合（Poker has-a Card）；use-a 依赖（玩家 use-a 扑克）	继承/组合/依赖	面向对象设计基础
+05-深浅拷贝	基本概念	copy.copy() 和 copy.deepcopy() 的核心区别？	浅拷贝只复制一层（内层共享对象）；深拷贝递归复制所有层级（完全独立）。口诀: 浅拷只抄皮，深拷连骨头一起复制	一层 vs 全部层级	修改嵌套可变对象时的坑
+05-is-vs-eq	易错	== 和 is 的区别？	== 比较值是否相等（内容一样）；is 比较身份是否相同（内存地址一样）。永远用 == 判断值 is 只用于判断 None	值相等 vs 同一对象	小整数 -5~256 缓存陷阱
+05-GC	基本概念	Python GC 的两种机制？	①引用计数: 每个对象记录被引用次数归零即回收 ②分代回收: 定期扫描处理循环引用，越老的对象越少检查	引用计数 + 分代回收	sys.getrefcount()
+05-魔法方法	记忆口诀	常用魔法方法的触发时机速记？	__init__ 创建初始化 / __str__ print给用户看 / __repr__ 给调试者 / __eq__ 定义==比较 / __call__ 让对象可调用 / __iter__/__next__ 迭代协议	触发时机决定用途	__str__给人看 __repr__给机器看
+05-call	基本概念	__call__ 方法的用途？	定义后对象可以像函数一样调用 obj(args)。用于装饰器类、状态机、回调函数封装	obj(args) 直接调用	累加器 Accumulator 示例
+05-上下文管理器	基本概念	__enter__ / __exit__ 的核心价值？	with 语句保证资源一定会被释放（文件关闭、锁释放、连接归还），即使发生异常也会执行 __exit__	资源安全释放	with Timer as t: 示例
+05-Mixin	基本概念	Mixin 模式的精髓？	不改变原有类结构只是"混入"额外能力。Mixin 类命名以 Mixin 结尾放在继承链最左侧。比多重继承更安全清晰	能力混入	 JsonMixin 序列化示例
+05-元类	基本概念	什么是元类(Metaclass)？	元类是创建类的类。普通类创建实例元类创建类本身。type 就是 Python 的默认元类	类的工厂	type() 动态创建类	99%场景不需要自定义元类
+05-SOLID	记忆口诀	SOLID 五大原则？	S 单一职责 O 开闭原则 L 里氏替换 I 接口隔离 D 依赖倒置	每个字母一个原则	面向对象设计基石
+06-迭代器协议	基本概念	迭代器协议的两个必要方法？	__iter__(self) 返回迭代器（通常 return self）和 __next__(self) 返回下一个元素没有则抛 StopIteration	__iter__ + __next__	for 循环的底层原理
+06-for原理	基本概念	for item in iterable: 背后做了什么？	①iterator = iter(iterable) 调用 __iter__() ②while True: 调用 __next__() 取值 ③StopIteration 时 break	iter() → next() → StopIteration	手写迭代器的关键理解
+06-一次性特性	易错	为什么迭代器只能遍历一次？	迭代器像水管里的水流完就没了。list(cd) 第一次有数据第二次就是空[]。解决: 需要多次使用时转 list() 或分离 Iterable 和 Iterator	水流的比喻	分离设计可重复遍历
+06-yield	基本概念	yield 关键字的三种用法？	①基本生成器替代手写迭代器 ②生成无限序列(惰性计算省内存) ③yield 作为数据接收者(协程 send())	生成器/无限序列/协程	含 yield 的函数返回生成器对象
+06-send	进阶	使用 send() 前为什么必须先调用 next()?	send() 前生成器必须在 yield 处暂停等待接收值。next() 或 send(None) 让它执行到第一个 yield 并暂停	"启动"生成器	acc.send(10) 前要先 next(acc)
+06-鸭子类型vsABCvsProtocol	基本概念	鸭子类型/ABC/Protocol 三者的区别？	鸭子类型: 运行时隐式检查灵活性最高; ABC: 显式继承运行时检查 IDE支持强; Protocol: 结构化子类型静态分析 IDE支持最强(Python 3.8+)	隐式/显式/静态分析	不同场景选不同方案
+07-BigO	基本概念	常见时间复杂度从快到慢排序？	O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2^n) < O(n!)	常数<对数<线性<线性对数<平方<指数<阶乘	算法效率的核心衡量标准
+07-list复杂度	面试高频	list.append() 和 list.insert(0,x) 的复杂度？	append() 是 O(1)；insert(0,x) 是 O(n) 因为需要移动所有后续元素	O(1) vs O(n)	频繁头部操作用 deque
+07-dict复杂度	面试高频	dict 字典操作的复杂度？	d[key] 设置获取删除都是 O(1) 平均（哈希映射）；key in d 也是 O(1) 远优于列表的 O(n)	平均 O(1)	哈希表原理
+07-五大算法思想	基本概念	五大算法思想分别是什么？	穷举法(尝试所有可能)、贪婪法(每步最优)、分治法(分治合并)、回溯法(试探回退)、动态规划(记忆重叠子问题)	穷举/贪婪/分治/回溯/DP	每种思想对应经典问题
+07-排序对比	基本概念	冒泡/选择/归并/快速排序的对比？	冒泡选择都是 O(n²)；归并稳定 O(n log n) 额外 O(n)；快速平均 O(n log n) 最坏 O(n²) 不稳定；Python 内置 Timsort 最优	实际用 sorted() 就好!	99% 场景不需要手写排序
+07-LRU	经典题	LRU 缓存淘汰策略的原理？	OrderedDict 保持插入顺序；被访问的 move_to_end(key) 移到最后；超容量时 popitem(last=False) 弹出头部（最久未使用的）	最近最少使用淘汰	LeetCode 热门题目
+08-GIL	基本概念	GIL 是什么？对多线程有什么影响？	GIL(Global Interpreter Lock)是 CPython 全局互斥锁，同一时刻只有一个线程执行字节码。IO密集型有效加速 CPU密集型不能并行需用多进程	IO加速 CPU不行	CPU 密集型用多进程
+08-Lock	基本概念	Lock 和 RLock 的区别？	Lock 普通锁不可重入(同一线程多次 acquire 会死锁)；RLock 可重入锁同一线程可多次 acquire 必须匹配 release	可重入 vs 不可重入	一般场景 Lock 就够
+08-Condition	易错	Condition 的 wait() 为什么必须用 while 不用 if？	防止虚假唤醒(Spurious Wakeup)。wait() 可能在没有 notify 的情况下返回如果用 if 就会跳过条件检查继续执行导致错误	虚假唤醒问题	while-not-if 是并发编程铁律
+08-Semaphore	基本概念	Semaphore 的用途？	限制同时运行的线程数量。初始化 Semaphore(n) 表示最多 n 个线程同时访问。适用于连接池限流等场景	控制并发数	类似停车场的车位
+08-ThreadPoolExecutor	基本概念	concurrent.futures.ThreadPoolExecutor 的用法？	with ThreadPoolExecutor(max_workers=n) as executor: future = executor.submit(func, *args) 或 executor.map(func, iterable)	线程池自动管理	推荐方式不要手动 Thread
+08-multiprocessing	基本概念	多进程如何绕过 GIL？	multiprocessing 模块每个进程有独立的 Python 解释器和内存空间真正并行执行。通过 Queue/Pipe/Manager 进行进程间通信 IPC	独立解释器+IPC	CPU 密集型任务首选
+08-async-await	基本概念	async/await 的适用场景？	高并发 IO 密集型任务（大量网络请求/数据库查询）。单线程事件循环调度协程切换在 IO 等待时自动让出执行权	异步 IO 高并发	aiohttp 库实战
+08-选型指南	总结	三种并发方式的选型指南？	IO 密集少量任务: 多线程简单够用；IO 密集大量任务: async/aiohttp 最高效；CPU 密集型任务: 多进程绕过 GIL；混合任务: 多进程+多线程组合	按任务类型选择	不要盲目用多线程

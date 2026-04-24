@@ -1,0 +1,51 @@
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-04-22T01:07:35.307Z
+provider: 
+---
+
+## 规则：代码讲解时必须解释缩写/英文变量名的含义
+
+**触发条件**：当用户发出"讲解"指令时
+
+**规则内容**：
+
+在讲解代码过程中，对于出现的**重要缩写变量名、英文简写、常见缩略词**，必须在首次出现时给出其**全称和中文含义**。
+
+### 常见必须解释的示例
+
+| 缩写 | 全称 | 含义 |
+|------|------|------|
+| `gen` | generator | 生成器 |
+| `func` | function | 函数 |
+| `args` | arguments | 参数（位置参数） |
+| `kwargs` | keyword arguments | 关键字参数 |
+| `iter` | iterator / iterable | 迭代器 / 可迭代对象 |
+| `ctx` | context | 上下文 |
+| `env` | environment | 环境 |
+| `cfg` | config | 配置 |
+| `req` | request | 请求 |
+| `res` | response | 响应 |
+| `msg` | message | 消息 |
+| `tmp` | temporary | 临时（变量）|
+| `src` | source | 源 |
+| `dst` | destination | 目标 |
+| `len` | length | 长度 |
+| `cnt` / `counter` | count / counter | 计数器 |
+| `avg` | average | 平均值 |
+| `num` | number | 数字 |
+| `str` | string | 字符串 |
+| `bool` | boolean | 布尔值 |
+| `dict` | dictionary | 字典 |
+| `list` | list | 列表 |
+| `idx` / `i` | index | 索引 |
+| `err` / `e` | error | 错误 |
+
+### 执行方式
+
+1. 在讲解开头或首次遇到缩写时，用简洁格式标注
+2. 推荐格式：`变量名（全称 → 中文含义）`
+3. 对于非常常见的（如 `i`, `len`, `str`）可简要带过
+4. 对于不常见或领域特定的缩写，务必详细解释
